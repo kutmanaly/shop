@@ -1,6 +1,6 @@
 Django
 djangorestframework
 psycopg2-binary
-django-filters
+django-filter
 Pillow
 django-decouple
