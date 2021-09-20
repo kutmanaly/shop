@@ -32,7 +32,6 @@ class RegistrationSerializer(serializers.Serializer):
         return user
 
 
-
 class ActivationSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     code = serializers.CharField(min_length=1, max_length=8, required=True)
