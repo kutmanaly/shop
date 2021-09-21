@@ -1,14 +1,18 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
-from main.views import (PublicationViewSet, CommentViewSet)
+
+from .views import (ProductViewSet,
+                    CommentViewSet)
 
 
 router = SimpleRouter()
-router.register('publications', PublicationViewSet, 'publications')
-router.register('comment', CommentViewSet, 'comment')
+router.register('publications', ProductViewSet, 'publications')
+router.register('comments', CommentViewSet, 'comments')
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]
+
+
 
 

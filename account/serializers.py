@@ -9,7 +9,7 @@ User = get_user_model()
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(min_length=1, required=True)
-    password_confirm = serializers.CharField(min_length=6, required=True)
+    password_confirm = serializers.CharField(min_length=1, required=True)
     name = serializers.CharField(max_length=50, required=True)
     last_name = serializers.CharField(required=False)
 
@@ -85,26 +85,6 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Email и пароль обязательны')
         attrs['user'] = user
         return attrs
-
-
-# class ForgotPasswordSerializer(serializers.Serializer):
-#     email = serializers.EmailField(required=True)
-#
-#     def validate_email(self, email):
-#         if not User.objects.filter(email).exists():
-#             raise serializers.ValidationError('Пользователь  не зарегистрирован')
-#         return email
-#
-#     def send_new_pass(self):
-#         email = self.validated_data.get('email')
-#         user = User.objects.get(email=email)
-#         password = User.objects.make_random_password()
-#         user.set_password(password)
-#         user.save()
-#         send_mail('Восстановление пароля',
-#                   f'Ваш новый пароль: {password},'
-#                   'test@test.com',
-#                   [email])
 
 
 class ForgotPasswordSerializer(serializers.Serializer):

@@ -1,14 +1,15 @@
-from django_filters import rest_framework as filters
-from rest_framework import viewsets, mixins
-from rest_framework.permissions import IsAuthenticated
+from django_filters import rest_framework as rest_filters
+from rest_framework import viewsets
+from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.generics import *
-from rest_framework import filters as rest_filter
-
-from product.models import Product
-from main.permissions import IsAuthorOrIsAdmin, IsAuthor
-from main.serializers import PublicationListSerializer, PublicationDetailSerializer, CreatePublicationSerializer, \
-    CommentSerializer
+from product.models import Product, Comment
+from product.permissions import IsAuthor, IsAuthorOrIsAdmin
+from product.serializer import (ProductListSerializer,
+                                ProductDetailSerializer,
+                                CreateProductSerializer,
+                                CommentSerializer)
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
 
 
 class ProductFilter(filters.FilterSet):
@@ -22,10 +23,10 @@ class ProductFilter(filters.FilterSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = CreateProductSerializer
-    permission_classes = [IsAuthorOrIsAdmin, ]
-    filter_backends = [filters.DjangoFilterBackend,
-                       rest_filter.SearchFilter,
-                       rest_filter.OrderingFilter]
+    permission_classes = [IsAuthorOrIsAdmin]
+    filter_backends = [rest_filters.DjangoFilterBackend,
+                       filters.SearchFilter,
+                       filters.OrderingFilter]
     filterset_class = ProductFilter
     search_fields = ['title', 'text']
     ordering_fields = ['created_at', 'title']
@@ -37,11 +38,15 @@ class ProductViewSet(viewsets.ModelViewSet):
             return ProductDetailSerializer
         return CreateProductSerializer
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        request = self.request
-        status = request.query_params.get('status')
-        queryset = queryset.filter(status=status)
-        if status is not None:
-            queryset = queryset.filter(status=status)
-        return status
+
+class CommentViewSet(mixins.CreateModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                     GenericViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        return [IsAuthor()]
