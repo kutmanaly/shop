@@ -1,4 +1,3 @@
-# обработчики запросов
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
@@ -44,17 +43,7 @@ class LogoutView(APIView):
         Token.objects.filter(user=user).delete()
         return Response('Вы успешно разлогинились')
 
-# 1. ами устанавливаем новый пароль
-# class ForgotPasswordView(APIView):
-#     def post(self, request):
-#         serializer = ForgotPasswordSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.send_new_pass()
-#             return Response('Вам выслан новый пароль')
-#         return Response(serializer.errors, status=400)
 
-
-# 2. отправляем юзеру код, а он сам создает новый пароль
 class ForgotPsswordView(APIView):
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
@@ -83,3 +72,6 @@ class ChangePasswordView(APIView):
             serializer.set_new_pass()
             return Response('Вы успешно сменили пароль')
         return Response(serializer.errors, status=400)
+
+
+
